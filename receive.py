@@ -1,5 +1,4 @@
 import socket, struct, GeoIP
-#touch
 
 GEOIP_DAT_PATH = "./GeoIPCity.dat"
 UDP_IP = "10.40.6.40"
