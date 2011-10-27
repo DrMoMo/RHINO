@@ -13,7 +13,20 @@ def getgeoip(remote_addr):
 	if not gir:
 		msg = '??'
 	else:
-		msg = str(gir['latitude']), str(gir['longitude'])
+		msg = gir['latitude'], gir['longitude']
+		
+		# print gir['country_code']
+		# print gir['country_code3']
+		# print gir['country_name']
+		# print gir['city']
+		# print gir['region']
+		# print gir['region_name']
+		# print gir['postal_code']
+		# print gir['latitude']
+		# print gir['longitude']
+		# print gir['area_code']
+		# print gir['time_zone']
+		# print gir['metro_code']
 
 	return msg
 
