@@ -1,7 +1,7 @@
 import socket, struct, GeoIP
 
 GEOIP_DAT_PATH = "./GeoIPCity.dat"
-UDP_IP = "10.40.6.40"
+UDP_IP = "10.40.14.50"
 UDP_PORT= 2055
 
 def getgeoip(remote_addr):
@@ -13,7 +13,7 @@ def getgeoip(remote_addr):
 	if not gir:
 		msg = '??'
 	else:
-		msg = gir['latitude'], gir['longitude']
+		msg = gir['country_code']
 		
 		# print gir['country_code']
 		# print gir['country_code3']
