@@ -5,32 +5,29 @@ import GeoIP
 import ConfigParser
 
 
-class ReceiveNetflow():
-	def __init__(self, config_file):
-		return None
+config = ConfigParser.ConfigParser()
+config.read('rhino.conf')
 
-	def configMap(self, section):
-		"""
-		Parses the config file, uses the following syntax to call a var from the conf:
-		configMap("section_title")['var_name']
-		REQUIRES: ConfigParser
-		"""
-		config = ConfigParser.ConfigParser()
-		config.read(self.config_file)
-		dict1 = {}
-		options = config.options(section)
-		for option in options:
-			try:
-				dict1[option] = config.get(section, option)
-				if dict1[option] == -1:
-					DebugPrint("skip: %s" % option)
-			except:
-				print("exception on %s!" % option)
-				dict1[option] = None
-		return dict1
+def configMap(section):
+	"""
+	Parses the config file, uses the following syntax to call a var from the conf:
+	configMap("section_title")['var_name']
+	REQUIRES: ConfigParser
+	"""
+	dict1 = {}
+	options = config.options(section)
+	for option in options:
+		try:
+			dict1[option] = config.get(section, option)
+			if dict1[option] == -1:
+				DebugPrint("skip: %s" % option)
+		except:
+			print("exception on %s!" % option)
+			dict1[option] = None
+	return dict1
 
 
-def addressInNetwork(self, ip, net):
+def addressInNetwork(ip,net):
 	"""
 	Checks if an ip address is in a network, returns bool:
 	addressInNetwork("10.0.1.3", "10.0.0.0/8")
@@ -42,7 +39,7 @@ def addressInNetwork(self, ip, net):
 	return ipaddr & netmask == netmask
 
 
-def getGeoIP(self, remote_addr):
+def getGeoIP(remote_addr):
 	"""
 	This function takes the ip address and resolves the geo ip data.
 	It returns a tuple with status and msg.  If geo ip data is resolved, the status is true
@@ -63,7 +60,7 @@ def getGeoIP(self, remote_addr):
 	return status, msg
 
 
-def getNetflow(self, data):
+def getNetflow(data):
 	"""
 	Takes the UDP netflow data and parses the data out based on netflow v5 offsets
 	REQUIRES: Struct
@@ -101,33 +98,33 @@ def main():
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind((configMap("netflow")['udp_ip'], int(configMap("netflow")['udp_port'])))
 
-	# while True:
-	# 	data, addr = sock.recvfrom( 1500 )
-	# 	for key, val in getNetflow(data).iteritems():
-	# 		source = val[0]
-	# 		dest = val[1]
+	while True:
+		data, addr = sock.recvfrom( 1500 )
+		for key, val in getNetflow(data).iteritems():
+			source = val[0]
+			dest = val[1]
 
-	# 		for network in configMap("netflow")['internal_network'].split(','):
-	# 			if addressInNetwork(source, network):
-	# 				source = configMap("netflow")['wan_ip']
-	# 			if addressInNetwork(dest, network):
-	# 				dest = configMap("netflow")['wan_ip']					
+			for network in configMap("netflow")['internal_network'].split(','):
+				if addressInNetwork(source, network):
+					source = configMap("netflow")['wan_ip']
+				if addressInNetwork(dest, network):
+					dest = configMap("netflow")['wan_ip']					
 			
-	# 		if source != dest:
-	# 			gsstat, gs = getGeoIP(source)
-	# 			gdstat, gd = getGeoIP(dest)	
-	# 			if gsstat & gdstat:
-	# 				print gs['country_code'], '->', gd['country_code']
-	# 			else:
-	# 				print 'Error: Missing Geo Data'
-	# 		elif (source == '255.255.255.255' or dest == '255.255.255.255'):
-	# 			print 'Broadcast Traffic'
-	# 		elif source == dest:
-	# 			print "Internal Traffic"
-	# 		else:
-	# 			print "UNKNOWN:"
+			if source != dest:
+				gsstat, gs = getGeoIP(source)
+				gdstat, gd = getGeoIP(dest)	
+				if gsstat & gdstat:
+					print gs['country_code'], '->', gd['country_code']
+				else:
+					print 'Error: Missing Geo Data'
+			elif (source == '255.255.255.255' or dest == '255.255.255.255'):
+				print 'Broadcast Traffic'
+			elif source == dest:
+				print "Internal Traffic"
+			else:
+				print "UNKNOWN:"
 			 
- 
+
 
 
 if __name__ == '__main__':
