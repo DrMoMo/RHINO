@@ -5,8 +5,10 @@ from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import Sequence
 from panda3d.core import Point3
 
+from direct.gui.OnscreenText import OnscreenText
+
 class MyApp(ShowBase):
-    def __init__(self):
+    def __init__(self, q):
         ShowBase.__init__(self)
  
         # Disable the camera trackball controls.
@@ -53,7 +55,10 @@ class MyApp(ShowBase):
                                   pandaHprInterval2,
                                   name="pandaPace")
         self.pandaPace.loop()
- 
+        textObject = OnscreenText(text = 'My Text String',
+                                  pos = (-0.5, 0.02),
+                                  scale = 0.1,
+                                  fg = (255,0,0,1))
     # Define a procedure to move the camera.
     def spinCameraTask(self, task):
         angleDegrees = task.time * 6.0

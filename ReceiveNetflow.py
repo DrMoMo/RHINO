@@ -141,4 +141,5 @@ class ReceiveNetflow():
     while True:
       self.data = self.getNetflow()
       self.parsedData = self.parseNetflow(self.data)
+      # uncomment to be verbose when running
       print self.Netflow2GeoIPData(self.parsedData)
